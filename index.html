@@ -474,24 +474,13 @@
     <audio id="audioPlayer"></audio>
 
     <script>
+        // Yeni şarkı eklemek istediğinde bu süslü parantezleri çoğaltıp alt alta ekleyebilirsin.
         const songs = [
             {
-                title: "Çav Bella (Bella Ciao)",
-                artist: "İtalyan Direniş Marşı",
+                title: "Haklıyız Kazanacağız",
+                artist: "Grup Yorum",
                 genre: "Marş",
-                src: "https://ia800300.us.archive.org/15/items/BellaCiao_775/BellaCiao.mp3"
-            },
-            {
-                title: "Gündoğdu Marşı",
-                artist: "Halk Müziği",
-                genre: "Protest",
-                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-            },
-            {
-                title: "Bella Ciao (Enstrümantal)",
-                artist: "Kolektif Yorum",
-                genre: "Özgürlük",
-                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+                src: "hakliyizkazanacagiz.mp3"
             }
         ];
 
@@ -545,7 +534,7 @@
 
         function togglePlay() {
             if (audio.paused) {
-                audio.pılay || audio.play();
+                audio.play();
                 playIcon.classList.remove('fa-play');
                 playIcon.classList.add('fa-pause');
             } else {
