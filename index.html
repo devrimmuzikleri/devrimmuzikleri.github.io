@@ -84,6 +84,7 @@
             gap: 20px;
             font-size: 0.9rem;
             color: var(--text-muted);
+            align-items: center;
         }
 
         .nav-links a {
@@ -97,6 +98,27 @@
 
         .nav-links a:hover {
             color: var(--vivid-yellow);
+        }
+
+        /* Döngü Modu Butonu */
+        .loop-toggle-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .loop-toggle-btn.active {
+            border-color: var(--vivid-yellow);
+            color: var(--vivid-yellow);
+            background: rgba(255, 204, 0, 0.05);
         }
 
         /* Main Content Layout */
@@ -481,6 +503,9 @@
             </div>
         </div>
         <div class="nav-links">
+            <button class="loop-toggle-btn active" id="loopToggleBtn" onclick="toggleLoopMode()" title="Playlist Döngüsü">
+                <i class="fa-solid fa-repeat"></i> <span id="loopStatusText">Döngü: Açık</span>
+            </button>
             <a href="#arsiv"><i class="fa-solid fa-list-music"></i> Arşiv</a>
             <a href="#videolar"><i class="fa-solid fa-video"></i> Videolar</a>
             <a href="https://github.com" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
@@ -603,7 +628,7 @@
                 title: "Bize Ölüm Yok",
                 artist: "Grup Ekin",
                 genre: "Protest",
-                src: "bizeolumyok.mp3"
+                src: "biz.mp3"
             },
             {
                 title: "Berivan",
@@ -616,10 +641,17 @@
                 artist: "Grup Kızılırmak",
                 genre: "Özgün / Türkü",
                 src: "kizilirmak.mp3"
+            },
+            {
+                title: "Bir Gün",
+                artist: "Grup Kızılırmak",
+                genre: "Özgün / Türkü",
+                src: "gun.mp3"
             }
         ];
 
         let currentSongIndex = 0;
+        let isPlaylistLoop = true; // Varsayılan olarak playlist döngüsü açık
         const audio = document.getElementById('audioPlayer');
         const playPauseBtn = document.getElementById('playPauseBtn');
         const playIcon = document.getElementById('playIcon');
@@ -632,8 +664,21 @@
         const volumeSlider = document.getElementById('volumeSlider');
         const trackListEl = document.getElementById('trackList');
         const trackCountEl = document.getElementById('track-count');
+        const loopToggleBtn = document.getElementById('loopToggleBtn');
+        const loopStatusText = document.getElementById('loopStatusText');
 
         trackCountEl.innerText = `${songs.length} Eser`;
+
+        function toggleLoopMode() {
+            isPlaylistLoop = !isPlaylistLoop;
+            if (isPlaylistLoop) {
+                loopToggleBtn.classList.add('active');
+                loopStatusText.innerText = "Döngü: Açık";
+            } else {
+                loopToggleBtn.classList.remove('active');
+                loopStatusText.innerText = "Döngü: Kapalı";
+            }
+        }
 
         function renderTracks() {
             trackListEl.innerHTML = '';
@@ -694,13 +739,28 @@
 
         playPauseBtn.addEventListener('click', togglePlay);
 
-        document.getElementById('nextBtn').addEventListener('click', () => {
-            currentSongIndex = (currentSongIndex + 1) % songs.length;
+        // Sonraki şarkıya geçiş
+        function nextSong() {
+            currentSongIndex++;
+            if (currentSongIndex >= songs.length) {
+                if (isPlaylistLoop) {
+                    currentSongIndex = 0; // Listeyi baştan başlat
+                } else {
+                    currentSongIndex = songs.length - 1;
+                    audio.pause();
+                    playIcon.classList.remove('fa-pause');
+                    playIcon.classList.add('fa-play');
+                    renderTracks();
+                    return;
+                }
+            }
             loadSong(currentSongIndex);
             audio.play();
             playIcon.classList.remove('fa-play');
             playIcon.classList.add('fa-pause');
-        });
+        }
+
+        document.getElementById('nextBtn').addEventListener('click', nextSong);
 
         document.getElementById('prevBtn').addEventListener('click', () => {
             currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
@@ -708,6 +768,11 @@
             audio.play();
             playIcon.classList.remove('fa-play');
             playIcon.classList.add('fa-pause');
+        });
+
+        // Şarkı bittiğinde otomatik sıradakine geç (Playlist Döngüsü)
+        audio.addEventListener('ended', () => {
+            nextSong();
         });
 
         audio.addEventListener('timeupdate', () => {
