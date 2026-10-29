@@ -220,6 +220,7 @@
             display: flex;
             align-items: center;
             gap: 16px;
+            flex: 1;
         }
 
         .track-number {
@@ -254,6 +255,26 @@
             padding: 4px 10px;
             border-radius: 4px;
             font-weight: 700;
+        }
+
+        .download-btn {
+            background: rgba(255, 204, 0, 0.1);
+            border: 1px solid var(--vivid-yellow);
+            color: var(--vivid-yellow);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .download-btn:hover {
+            background-color: var(--vivid-yellow);
+            color: var(--bg-black);
         }
 
         .play-btn-small {
@@ -653,6 +674,12 @@
                 artist: "Selda Bağcan",
                 genre: "Protest / Halk",
                 src: "yuh.mp3"
+            },
+            {
+                title: "1 Mayıs",
+                artist: "Cem Karaca",
+                genre: "Marş / Direniş",
+                src: "1mayis.mp3"
             }
         ];
 
@@ -691,8 +718,8 @@
             songs.forEach((song, index) => {
                 const isCurrent = index === currentSongIndex;
                 trackListEl.innerHTML += `
-                    <div class="track-item ${isCurrent ? 'active' : ''}" onclick="selectSong(${index})">
-                        <div class="track-info">
+                    <div class="track-item ${isCurrent ? 'active' : ''}">
+                        <div class="track-info" onclick="selectSong(${index})">
                             <span class="track-number">${index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
                             <div class="track-details">
                                 <h4>${song.title}</h4>
@@ -701,7 +728,10 @@
                         </div>
                         <div class="track-meta">
                             <span class="track-genre">${song.genre}</span>
-                            <button class="play-btn-small">
+                            <a href="${song.src}" class="download-btn" download title="MP3 İndir">
+                                <i class="fa-solid fa-download"></i> İndir
+                            </a>
+                            <button class="play-btn-small" onclick="selectSong(${index})">
                                 <i class="fa-solid ${isCurrent && !audio.paused ? 'fa-pause' : 'fa-play'}"></i>
                             </button>
                         </div>
