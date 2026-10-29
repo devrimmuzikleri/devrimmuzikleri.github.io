@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devrimci Müzikler Kolektifi | DMK</title>
+    <!-- Modern Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-black: #000000;
+            --surface-black: #111111;
+            --surface-hover: #1a1a1a;
+            --pure-red: #cc0000;
+            --bright-red: #ff0033;
+            --vivid-yellow: #ffcc00;
+            --text-main: #ffffff;
+            --text-muted: #999999;
+            --border-color: rgba(255, 204, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            border-top: 5px solid var(--bright-red);
+        }
+
+        /* Navbar */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: var(--surface-black);
+            border-bottom: 2px solid var(--vivid-yellow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-badge {
+            background-color: var(--bright-red);
+            color: var(--vivid-yellow);
+            font-weight: 800;
+            font-size: 1rem;
+            padding: 6px 12px;
+            border-radius: 4px;
+            letter-spacing: 1px;
+            border: 1px solid var(--vivid-yellow);
+        }
+
+        .logo-text h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .logo-text span {
+            font-size: 0.75rem;
+            color: var(--vivid-yellow);
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .nav-links a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--vivid-yellow);
+        }
+
+        /* Main Content Layout */
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .hero-banner {
+            background-color: var(--surface-black);
+            border-left: 5px solid var(--bright-red);
+            border-right: 5px solid var(--vivid-yellow);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hero-banner h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .hero-banner h2 span {
+            color: var(--vivid-yellow);
+        }
+
+        .hero-banner p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .hero-badge-icon {
+            font-size: 3rem;
+            color: var(--bright-red);
+        }
+
+        /* Playlist Section */
+        .playlist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+
+        .playlist-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--vivid-yellow);
+        }
+
+        .track-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 120px;
+        }
+
+        .track-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--surface-black);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 14px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .track-item:hover {
+            background-color: var(--surface-hover);
+            border-color: var(--bright-red);
+            transform: translateY(-2px);
+        }
+
+        .track-item.active {
+            border-color: var(--vivid-yellow);
+            background-color: var(--surface-hover);
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.1);
+        }
+
+        .track-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .track-number {
+            font-size: 0.9rem;
+            color: var(--vivid-yellow);
+            font-weight: 700;
+            width: 20px;
+        }
+
+        .track-details h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+            color: var(--text-main);
+        }
+
+        .track-details p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .track-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .track-genre {
+            font-size: 0.75rem;
+            background-color: var(--bright-red);
+            color: var(--text-main);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .play-btn-small {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .track-item:hover .play-btn-small {
+            background-color: var(--vivid-yellow);
+            color: var(--bg-black);
+        }
+
+        /* Fixed Footer Player */
+        .player-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--surface-black);
+            border-top: 2px solid var(--bright-red);
+            padding: 16px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+        }
+
+        .player-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: 200px;
+        }
+
+        .player-thumb {
+            width: 45px;
+            height: 45px;
+            background-color: var(--bright-red);
+            color: var(--vivid-yellow);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border: 1px solid var(--vivid-yellow);
+        }
+
+        .player-song-info h5 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .player-song-info p {
+            font-size: 0.75rem;
+            color: var(--vivid-yellow);
+        }
+
+        .player-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            max-width: 500px;
+            padding: 0 20px;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .control-btn:hover {
+            color: var(--vivid-yellow);
+        }
+
+        .main-play-btn {
+            background-color: var(--vivid-yellow);
+            color: var(--bg-black);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.1s;
+        }
+
+        .main-play-btn:hover {
+            transform: scale(1.05);
+            background-color: var(--bright-red);
+            color: var(--text-main);
+        }
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 4px;
+            background-color: #222;
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--vivid-yellow);
+            border-radius: 2px;
+            width: 0%;
+        }
+
+        .player-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 150px;
+            justify-content: flex-end;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .volume-slider {
+            width: 80px;
+            accent-color: var(--vivid-yellow);
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header { padding: 15px 20px; }
+            .player-bar { padding: 12px 20px; flex-direction: column; gap: 12px; }
+            .player-center { width: 100%; padding: 0; }
+            .player-right { display: none; }
+            .hero-banner { flex-direction: column; text-align: center; gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-area">
+            <div class="logo-badge">DMK</div>
+            <div class="logo-text">
+                <h1>Devrimci Müzikler Kolektifi</h1>
+                <span>Özgürlük, Marş ve Protest Arşivi</span>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="#arsiv"><i class="fa-solid fa-list-music"></i> Arşiv</a>
+            <a href="https://github.com" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container" id="arsiv">
+        <div class="hero-banner">
+            <div>
+                <h2>Halkın Sesi, <span>Müziğin Gücü</span></h2>
+                <p>Tarih boyunca dillerden düşmeyen mücadele, özgürlük ve direnniş eserleri bir arada.</p>
+            </div>
+            <div class="hero-badge-icon">
+                <i class="fa-solid fa-fire-flame-curved"></i>
+            </div>
+        </div>
+
+        <div class="playlist-header">
+            <h3>Koleksiyon Parçaları</h3>
+            <span style="font-size: 0.85rem; color: var(--vivid-yellow);" id="track-count">0 Eser</span>
+        </div>
+
+        <!-- Track Listesi -->
+        <div class="track-list" id="trackList">
+            <!-- JavaScript ile doldurulacak -->
+        </div>
+    </div>
+
+    <!-- Alt Müzikçalar (Player Bar) -->
+    <div class="player-bar">
+        <div class="player-left">
+            <div class="player-thumb">
+                <i class="fa-solid fa-compact-disc"></i>
+            </div>
+            <div class="player-song-info">
+                <h5 id="currentTitle">Bir Parça Seçin</h5>
+                <p id="currentArtist">DMK Arşivi</p>
+            </div>
+        </div>
+
+        <div class="player-center">
+            <div class="player-controls">
+                <button class="control-btn" id="prevBtn"><i class="fa-solid fa-backward-step"></i></button>
+                <button class="main-play-btn" id="playPauseBtn"><i class="fa-solid fa-play" id="playIcon"></i></button>
+                <button class="control-btn" id="nextBtn"><i class="fa-solid fa-forward-step"></i></button>
+            </div>
+            <div class="progress-container">
+                <span id="currentTime">0:00</span>
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <span id="duration">0:00</span>
+            </div>
+        </div>
+
+        <div class="player-right">
+            <i class="fa-solid fa-volume-high" style="color: var(--vivid-yellow);"></i>
+            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.05" value="1">
+        </div>
+    </div>
+
+    <!-- Gizli HTML5 Audio Elementi -->
+    <audio id="audioPlayer"></audio>
+
+    <script>
+        const songs = [
+            {
+                title: "Çav Bella (Bella Ciao)",
+                artist: "İtalyan Direniş Marşı",
+                genre: "Marş",
+                src: "https://ia800300.us.archive.org/15/items/BellaCiao_775/BellaCiao.mp3"
+            },
+            {
+                title: "Gündoğdu Marşı",
+                artist: "Halk Müziği",
+                genre: "Protest",
+                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+            },
+            {
+                title: "Bella Ciao (Enstrümantal)",
+                artist: "Kolektif Yorum",
+                genre: "Özgürlük",
+                src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+            }
+        ];
+
+        let currentSongIndex = 0;
+        const audio = document.getElementById('audioPlayer');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const playIcon = document.getElementById('playIcon');
+        const currentTitle = document.getElementById('currentTitle');
+        const currentArtist = document.getElementById('currentArtist');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const trackListEl = document.getElementById('trackList');
+        const trackCountEl = document.getElementById('track-count');
+
+        trackCountEl.innerText = `${songs.length} Eser`;
+
+        function renderTracks() {
+            trackListEl.innerHTML = '';
+            songs.forEach((song, index) => {
+                const isCurrent = index === currentSongIndex;
+                trackListEl.innerHTML += `
+                    <div class="track-item ${isCurrent ? 'active' : ''}" onclick="selectSong(${index})">
+                        <div class="track-info">
+                            <span class="track-number">${index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
+                            <div class="track-details">
+                                <h4>${song.title}</h4>
+                                <p>${song.artist}</p>
+                            </div>
+                        </div>
+                        <div class="track-meta">
+                            <span class="track-genre">${song.genre}</span>
+                            <button class="play-btn-small">
+                                <i class="fa-solid ${isCurrent && !audio.paused ? 'fa-pause' : 'fa-play'}"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function loadSong(index) {
+            currentSongIndex = index;
+            audio.src = songs[index].src;
+            currentTitle.innerText = songs[index].title;
+            currentArtist.innerText = songs[index].artist;
+            renderTracks();
+        }
+
+        function togglePlay() {
+            if (audio.paused) {
+                audio.pılay || audio.play();
+                playIcon.classList.remove('fa-play');
+                playIcon.classList.add('fa-pause');
+            } else {
+                audio.pause();
+                playIcon.classList.remove('fa-pause');
+                playIcon.classList.add('fa-play');
+            }
+            renderTracks();
+        }
+
+        function selectSong(index) {
+            if (currentSongIndex === index) {
+                togglePlay();
+            } else {
+                loadSong(index);
+                audio.play();
+                playIcon.classList.remove('fa-play');
+                playIcon.classList.add('fa-pause');
+                renderTracks();
+            }
+        }
+
+        playPauseBtn.addEventListener('click', togglePlay);
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            loadSong(currentSongIndex);
+            audio.play();
+            playIcon.classList.remove('fa-play');
+            playIcon.classList.add('fa-pause');
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            loadSong(currentSongIndex);
+            audio.play();
+            playIcon.classList.remove('fa-play');
+            playIcon.classList.add('fa-pause');
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            if (audio.duration) {
+                const progressPercent = (audio.currentTime / audio.duration) * 100;
+                progressFill.style.width = `${progressPercent}%`;
+
+                let currentMinutes = Math.floor(audio.currentTime / 60);
+                let currentSeconds = Math.floor(audio.currentTime % 60);
+                if (currentSeconds < 10) currentSeconds = '0' + currentSeconds;
+                currentTimeEl.innerText = `${currentMinutes}:${currentSeconds}`;
+
+                let durMinutes = Math.floor(audio.duration / 60);
+                let durSeconds = Math.floor(audio.duration % 60);
+                if (durSeconds < 10) durSeconds = '0' + durSeconds;
+                if (!isNaN(durMinutes)) durationEl.innerText = `${durMinutes}:${durSeconds}`;
+            }
+        });
+
+        progressBar.addEventListener('click', (e) => {
+            const width = progressBar.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audio.duration;
+            audio.currentTime = (clickX / width) * duration;
+        });
+
+        volumeSlider.addEventListener('input', (e) => {
+            audio.volume = e.target.value;
+        });
+
+        loadSong(0);
+    </script>
+</body>
+</html>
