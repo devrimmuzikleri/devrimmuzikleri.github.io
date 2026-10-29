@@ -55,15 +55,16 @@
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
         }
 
+        /* Logo büyütüldü (55px) */
         .site-logo {
-            width: 40px;
-            height: 40px;
+            width: 55px;
+            height: 55px;
             object-fit: contain;
-            border-radius: 4px;
-            border: 1px solid var(--vivid-yellow);
+            border-radius: 6px;
+            border: 2px solid var(--vivid-yellow);
         }
 
         .logo-text h1 {
@@ -399,7 +400,7 @@
     <!-- Header -->
     <header>
         <div class="logo-area">
-            <!-- devrimci.png logosu eklendi -->
+            <!-- Büyütülmüş devrimci.png -->
             <img src="devrimci.png" alt="DMK Logo" class="site-logo">
             <div class="logo-text">
                 <h1>Devrimci Müzikler Kolektifi</h1>
@@ -472,7 +473,7 @@
     <audio id="audioPlayer"></audio>
 
     <script>
-        // Şarkı listesine Dağlara Gel eklendi
+        // Şarkı Listesi
         const songs = [
             {
                 title: "Haklıyız Kazanacağız",
@@ -485,6 +486,12 @@
                 artist: "Grup Yorum",
                 genre: "Türkü / Protest",
                 src: "daglar.mp3"
+            },
+            {
+                title: "De Be Aslan Karam",
+                artist: "Grup Ekin",
+                genre: "Protest / Halk",
+                src: "debeaslankaram.mp3"
             }
         ];
 
