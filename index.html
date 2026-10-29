@@ -27,6 +27,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Plus Jakarta Sans', sans-serif;
+            scroll-behavior: smooth;
         }
 
         body {
@@ -89,6 +90,9 @@
             color: inherit;
             text-decoration: none;
             transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .nav-links a:hover {
@@ -112,7 +116,7 @@
             border-bottom: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 30px;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -139,8 +143,8 @@
             color: var(--bright-red);
         }
 
-        /* Playlist Section */
-        .playlist-header {
+        /* Sections Header */
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -149,17 +153,21 @@
             padding-bottom: 10px;
         }
 
-        .playlist-header h3 {
+        .section-header h3 {
             font-size: 1.2rem;
             font-weight: 700;
             color: var(--vivid-yellow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
+        /* Playlist Section */
         .track-list {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-bottom: 120px;
+            margin-bottom: 50px;
         }
 
         .track-item {
@@ -244,6 +252,73 @@
         .track-item:hover .play-btn-small {
             background-color: var(--vivid-yellow);
             color: var(--bg-black);
+        }
+
+        /* Video Section */
+        .video-section {
+            margin-bottom: 120px;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .video-card {
+            background-color: var(--surface-black);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .video-card:hover {
+            border-color: var(--bright-red);
+        }
+
+        .video-wrapper {
+            width: 100%;
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Oranı */
+            height: 0;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-info {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .video-info h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .video-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .video-badge {
+            font-size: 0.75rem;
+            background-color: var(--bright-red);
+            color: var(--text-main);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 700;
         }
 
         /* Fixed Footer Player */
@@ -407,30 +482,57 @@
         </div>
         <div class="nav-links">
             <a href="#arsiv"><i class="fa-solid fa-list-music"></i> Arşiv</a>
+            <a href="#videolar"><i class="fa-solid fa-video"></i> Videolar</a>
             <a href="https://github.com" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
         </div>
     </header>
 
     <!-- Main Container -->
-    <div class="container" id="arsiv">
+    <div class="container">
         <div class="hero-banner">
             <div>
                 <h2>Halkın Sesi, <span>Müziğin Gücü</span></h2>
-                <p>Tarih boyunca dillerden düşmeyen mücadele, özgürlük ve direnniş eserleri bir arada.</p>
+                <p>Tarih boyunca dillerden düşmeyen mücadele, özgürlük ve direnniş eserleri ile arşivlik görüntüler.</p>
             </div>
             <div class="hero-badge-icon">
                 <i class="fa-solid fa-fire-flame-curved"></i>
             </div>
         </div>
 
-        <div class="playlist-header">
-            <h3>Koleksiyon Parçaları</h3>
-            <span style="font-size: 0.85rem; color: var(--vivid-yellow);" id="track-count">0 Eser</span>
+        <!-- Müzik Arşivi Bölümü -->
+        <div id="arsiv">
+            <div class="section-header">
+                <h3><i class="fa-solid fa-compact-disc"></i> Koleksiyon Parçaları</h3>
+                <span style="font-size: 0.85rem; color: var(--vivid-yellow);" id="track-count">0 Eser</span>
+            </div>
+
+            <div class="track-list" id="trackList">
+                <!-- JavaScript ile doldurulacak -->
+            </div>
         </div>
 
-        <!-- Track Listesi -->
-        <div class="track-list" id="trackList">
-            <!-- JavaScript ile doldurulacak -->
+        <!-- Video Arşivi Bölümü -->
+        <div class="video-section" id="videolar">
+            <div class="section-header">
+                <h3><i class="fa-solid fa-film"></i> Video Arşivi</h3>
+                <span style="font-size: 0.85rem; color: var(--vivid-yellow);">Konser & Belgesel</span>
+            </div>
+
+            <div class="video-grid">
+                <div class="video-card">
+                    <div class="video-wrapper">
+                        <!-- YouTube Embed Oynatıcı -->
+                        <iframe src="https://www.youtube.com/embed/MSuHP8nq8kw" title="Ahmet Kaya MLKP Konseri" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info">
+                        <div>
+                            <h4>Ahmet Kaya MLKP Konseri</h4>
+                            <p>Arşiv Kaydı</p>
+                        </div>
+                        <span class="video-badge">Özel Konser</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
