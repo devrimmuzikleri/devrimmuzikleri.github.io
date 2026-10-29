@@ -171,6 +171,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            margin-top: 30px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
             padding-bottom: 10px;
         }
@@ -189,7 +190,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-bottom: 50px;
+            margin-bottom: 30px;
         }
 
         .track-item {
@@ -300,6 +301,7 @@
         /* Video Section */
         .video-section {
             margin-bottom: 120px;
+            margin-top: 40px;
         }
 
         .video-grid {
@@ -552,9 +554,8 @@
                 <span style="font-size: 0.85rem; color: var(--vivid-yellow);" id="track-count">0 Eser</span>
             </div>
 
-            <div class="track-list" id="trackList">
-                <!-- JavaScript ile doldurulacak -->
-            </div>
+            <!-- Kategoriler JS ile dinamik olarak doldurulacak -->
+            <div id="categoriesContainer"></div>
         </div>
 
         <!-- Video Arşivi Bölümü -->
@@ -619,73 +620,112 @@
     <audio id="audioPlayer"></audio>
 
     <script>
-        // Şarkı Listesi
+        // Şarkı Listesi ve Kategorileri
         const songs = [
             {
                 title: "Haklıyız Kazanacağız",
                 artist: "Grup Yorum",
                 genre: "Marş",
+                category: "marş",
                 src: "hakliyizkazanacagiz.mp3"
             },
             {
                 title: "Dağlara Gel",
                 artist: "Grup Yorum",
                 genre: "Türkü / Protest",
+                category: "türkü",
                 src: "daglar.mp3"
             },
             {
                 title: "De Be Aslan Karam",
                 artist: "Grup Ekin",
                 genre: "Protest / Halk",
+                category: "türkü",
                 src: "debeaslankaram.mp3"
             },
             {
                 title: "Çav Bella",
                 artist: "Grup Yorum",
                 genre: "Marş / Direniş",
+                category: "marş",
                 src: "cavbella.mp3"
             },
             {
                 title: "Bize Ölüm Yok",
                 artist: "Grup Ekin",
                 genre: "Protest",
+                category: "marş",
                 src: "biz.mp3"
             },
             {
                 title: "Berivan",
                 artist: "Grup Yorum",
                 genre: "Türkü / Protest",
+                category: "türkü",
                 src: "Berivan.mp3"
             },
             {
                 title: "Pazarlık M'olur",
                 artist: "Grup Kızılırmak",
                 genre: "Özgün / Türkü",
+                category: "türkü",
                 src: "kizilirmak.mp3"
             },
             {
                 title: "Bir Gün",
                 artist: "Grup Kızılırmak",
                 genre: "Özgün / Türkü",
+                category: "türkü",
                 src: "gun.mp3"
             },
             {
                 title: "Yuh Yuh",
                 artist: "Selda Bağcan",
                 genre: "Protest / Halk",
+                category: "türkü",
                 src: "yuh.mp3"
             },
             {
                 title: "1 Mayıs",
                 artist: "Cem Karaca",
                 genre: "Marş / Direniş",
+                category: "marş",
                 src: "1mayis.mp3"
             },
             {
                 title: "İsyan Ateşi",
                 artist: "Grup Munzur",
                 genre: "Protest / Marş",
+                category: "marş",
                 src: "isyan.mp3"
+            },
+            {
+                title: "Avusturya İşçi Marşı",
+                artist: "Grup Yorum",
+                genre: "Marş",
+                category: "marş",
+                src: "avusturya.mp3"
+            },
+            {
+                title: "İşçinin Sınıf Cephesi",
+                artist: "ATTF İşçi Korosu",
+                genre: "Marş / İşçi",
+                category: "marş",
+                src: "isci.mp3"
+            },
+            {
+                title: "Molotoflu Vodvil (feat. Ağaçkakan)",
+                artist: "Protest Rap",
+                genre: "Protest Rap",
+                category: "rap",
+                src: "vodvil.mp3"
+            },
+            {
+                title: "İşçi Sınıfı Marşı: “Geliyoruz Zincirleri Kıra Kıra Hey!”",
+                artist: "ATTF İşçi Korosu",
+                genre: "Marş",
+                category: "marş",
+                src: "geliyoruz.mp3"
             }
         ];
 
@@ -701,7 +741,7 @@
         const currentTimeEl = document.getElementById('currentTime');
         const durationEl = document.getElementById('duration');
         const volumeSlider = document.getElementById('volumeSlider');
-        const trackListEl = document.getElementById('trackList');
+        const categoriesContainer = document.getElementById('categoriesContainer');
         const trackCountEl = document.getElementById('track-count');
         const loopToggleBtn = document.getElementById('loopToggleBtn');
         const loopStatusText = document.getElementById('loopStatusText');
@@ -720,29 +760,54 @@
         }
 
         function renderTracks() {
-            trackListEl.innerHTML = '';
-            songs.forEach((song, index) => {
-                const isCurrent = index === currentSongIndex;
-                trackListEl.innerHTML += `
-                    <div class="track-item ${isCurrent ? 'active' : ''}">
-                        <div class="track-info" onclick="selectSong(${index})">
-                            <span class="track-number">${index + 1 < 10 ? '0' + (index + 1) : index + 1}</span>
-                            <div class="track-details">
-                                <h4>${song.title}</h4>
-                                <p>${song.artist}</p>
+            categoriesContainer.innerHTML = '';
+
+            // Kategorileri Gruplandır
+            const categories = [
+                { id: 'türkü', name: 'Türküler & Özgün Müzik', icon: 'fa-guitar' },
+                { id: 'rap', name: 'Rap & Protest', icon: 'fa-microphone-lines' },
+                { id: 'marş', name: 'Marşlar & Direniş Ezgileri', icon: 'fa-flag' }
+            ];
+
+            categories.forEach(cat => {
+                const catSongs = songs.map((song, globalIndex) => ({ ...song, globalIndex }))
+                                      .filter(song => song.category === cat.id);
+
+                if (catSongs.length > 0) {
+                    let tracksHTML = '';
+                    catSongs.forEach((song) => {
+                        const isCurrent = song.globalIndex === currentSongIndex;
+                        tracksHTML += `
+                            <div class="track-item ${isCurrent ? 'active' : ''}">
+                                <div class="track-info" onclick="selectSong(${song.globalIndex})">
+                                    <span class="track-number">${song.globalIndex + 1 < 10 ? '0' + (song.globalIndex + 1) : song.globalIndex + 1}</span>
+                                    <div class="track-details">
+                                        <h4>${song.title}</h4>
+                                        <p>${song.artist}</p>
+                                    </div>
+                                </div>
+                                <div class="track-meta">
+                                    <span class="track-genre">${song.genre}</span>
+                                    <a href="${song.src}" class="download-btn" download title="MP3 İndir">
+                                        <i class="fa-solid fa-download"></i> İndir
+                                    </a>
+                                    <button class="play-btn-small" onclick="selectSong(${song.globalIndex})">
+                                        <i class="fa-solid ${isCurrent && !audio.paused ? 'fa-pause' : 'fa-play'}"></i>
+                                    </button>
+                                </div>
                             </div>
+                        `;
+                    });
+
+                    categoriesContainer.innerHTML += `
+                        <div class="section-header" style="margin-top: 25px;">
+                            <h3 style="font-size: 1.05rem;"><i class="fa-solid ${cat.icon}"></i> ${cat.name}</h3>
                         </div>
-                        <div class="track-meta">
-                            <span class="track-genre">${song.genre}</span>
-                            <a href="${song.src}" class="download-btn" download title="MP3 İndir">
-                                <i class="fa-solid fa-download"></i> İndir
-                            </a>
-                            <button class="play-btn-small" onclick="selectSong(${index})">
-                                <i class="fa-solid ${isCurrent && !audio.paused ? 'fa-pause' : 'fa-play'}"></i>
-                            </button>
+                        <div class="track-list">
+                            ${tracksHTML}
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             });
         }
 
