@@ -81,7 +81,7 @@
 
         .nav-links {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             font-size: 0.9rem;
             color: var(--text-muted);
             align-items: center;
@@ -133,6 +133,7 @@
             padding: 0 20px;
             flex: 1;
             width: 100%;
+            margin-bottom: 120px;
         }
 
         .hero-banner {
@@ -251,7 +252,7 @@
         .track-meta {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .track-genre {
@@ -263,24 +264,36 @@
             font-weight: 700;
         }
 
-        .download-btn {
+        .action-btn {
             background: rgba(255, 204, 0, 0.1);
             border: 1px solid var(--vivid-yellow);
             color: var(--vivid-yellow);
-            padding: 6px 12px;
+            padding: 6px 10px;
             border-radius: 4px;
             font-size: 0.8rem;
             font-weight: 600;
-            text-decoration: none;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
+            text-decoration: none;
             transition: all 0.2s;
         }
 
-        .download-btn:hover {
+        .action-btn:hover {
             background-color: var(--vivid-yellow);
             color: var(--bg-black);
+        }
+
+        .action-btn.remove {
+            background: rgba(255, 0, 51, 0.1);
+            border-color: var(--bright-red);
+            color: var(--bright-red);
+        }
+
+        .action-btn.remove:hover {
+            background-color: var(--bright-red);
+            color: var(--text-main);
         }
 
         .play-btn-small {
@@ -322,7 +335,6 @@
 
         /* Video Section */
         .video-section {
-            margin-bottom: 120px;
             margin-top: 40px;
         }
 
@@ -552,8 +564,9 @@
                 <i class="fa-solid fa-repeat"></i> <span id="loopStatusText">Döngü: Açık</span>
             </button>
             <button class="nav-btn" onclick="switchPage('anaSayfa')"><i class="fa-solid fa-house"></i> Ana Sayfa</button>
+            <button class="nav-btn" onclick="switchPage('ozelPlaylist')"><i class="fa-solid id-badge fa-list-check"></i> Çalma Listem (<span id="playlistCount">0</span>)</button>
             <button class="nav-btn" onclick="switchPage('sovyet')"><i class="fa-solid fa-star"></i> Sovyet Müzikleri</button>
-            <button class="nav-btn" onclick="switchPage('enternasyonal')"><i class="fa-solid fa-globe"></i> Enternasyonal Müzikler</button>
+            <button class="nav-btn" onclick="switchPage('enternasyonal')"><i class="fa-solid fa-globe"></i> Enternasyonal</button>
             <a href="https://github.com" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
         </div>
     </header>
@@ -571,9 +584,7 @@
         </div>
 
         <!-- Dinamik Sayfa İçerik Alanı -->
-        <div id="pageContent">
-            <!-- JavaScript ile doldurulacak -->
-        </div>
+        <div id="pageContent"></div>
 
         <!-- Video Arşivi Bölümü (Sadece Ana Sayfada Görünür) -->
         <div class="video-section" id="videoSection">
@@ -585,7 +596,6 @@
             <div class="video-grid">
                 <div class="video-card">
                     <div class="video-wrapper">
-                        <!-- YouTube Embed Oynatıcı -->
                         <iframe src="https://www.youtube.com/embed/MSuHP8nq8kw" title="Ahmet Kaya MLKP Konseri" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
                     <div class="video-info">
@@ -633,13 +643,10 @@
         </div>
     </div>
 
-    <!-- Gizli HTML5 Audio Elementi -->
     <audio id="audioPlayer"></audio>
 
     <script>
-        // Şarkı Listesi ve Kategorileri (Global Playlist)
         const songs = [
-            // Ana Sayfa Şarkıları
             { title: "Haklıyız Kazanacağız", artist: "Grup Yorum", genre: "Marş", category: "marş", src: "hakliyizkazanacagiz.mp3", page: "anaSayfa" },
             { title: "Dağlara Gel", artist: "Grup Yorum", genre: "Türkü / Protest", category: "türkü", src: "daglar.mp3", page: "anaSayfa" },
             { title: "De Be Aslan Karam", artist: "Grup Ekin", genre: "Protest / Halk", category: "türkü", src: "debeaslankaram.mp3", page: "anaSayfa" },
@@ -656,11 +663,13 @@
             { title: "Molotoflu Vodvil (feat. Ağaçkakan)", artist: "Protest Rap", genre: "Protest Rap", category: "rap", src: "vodvil.mp3", page: "anaSayfa" },
             { title: "İşçi Sınıfı Marşı: “Geliyoruz Zincirleri Kıra Kıra Hey!”", artist: "ATTF İşçi Korosu", genre: "Marş", category: "marş", src: "geliyoruz.mp3", page: "anaSayfa" },
             { title: "Reşo & Keçe Kurdan", artist: "Grup YORUM", genre: "Türkü / Özgün", category: "türkü", src: "reso.mp3", page: "anaSayfa" },
-
-            // Sovyet Müzikleri Sayfası Şarkıları
             { title: "Katyusha / Катюша", artist: "Red Army", genre: "Sovyet Marşı", category: "sovyet", src: "katyusha.mp3", page: "sovyet" }
         ];
 
+        // Kullanıcının özel çalma listesi (localStorage'da saklanır)
+        let customPlaylist = JSON.parse(localStorage.getItem('dmk_custom_playlist')) || [];
+        
+        let currentPlayingList = songs; // Aktif çalınan liste (Ana liste veya özel liste)
         let currentSongIndex = 0;
         let isPlaylistLoop = true; 
         let currentPage = 'anaSayfa';
@@ -679,6 +688,13 @@
         const videoSectionEl = document.getElementById('videoSection');
         const loopToggleBtn = document.getElementById('loopToggleBtn');
         const loopStatusText = document.getElementById('loopStatusText');
+        const playlistCountEl = document.getElementById('playlistCount');
+
+        updatePlaylistCount();
+
+        function updatePlaylistCount() {
+            playlistCountEl.innerText = customPlaylist.length;
+        }
 
         function toggleLoopMode() {
             isPlaylistLoop = !isPlaylistLoop;
@@ -691,6 +707,18 @@
             }
         }
 
+        function toggleAddToPlaylist(globalIndex) {
+            const indexInCustom = customPlaylist.indexOf(globalIndex);
+            if (indexInCustom > -1) {
+                customPlaylist.splice(indexInCustom, 1);
+            } else {
+                customPlaylist.push(globalIndex);
+            }
+            localStorage.setItem('dmk_custom_playlist', JSON.stringify(customPlaylist));
+            updatePlaylistCount();
+            renderPage();
+        }
+
         function switchPage(pageName) {
             currentPage = pageName;
             renderPage();
@@ -701,14 +729,7 @@
 
             if (currentPage === 'anaSayfa') {
                 videoSectionEl.style.display = 'block';
-                
-                let html = `
-                    <div id="arsiv">
-                        <div class="section-header">
-                            <h3><i class="fa-solid fa-compact-disc"></i> Koleksiyon Parçaları</h3>
-                            <span style="font-size: 0.85rem; color: var(--vivid-yellow);" id="track-count">0 Eser</span>
-                        </div>
-                `;
+                let html = `<div id="arsiv"><div class="section-header"><h3><i class="fa-solid fa-compact-disc"></i> Koleksiyon Parçaları</h3><span style="font-size: 0.85rem; color: var(--vivid-yellow);" id="track-count">0 Eser</span></div>`;
 
                 const categories = [
                     { id: 'türkü', name: 'Türküler & Özgün Müzik', icon: 'fa-guitar' },
@@ -716,21 +737,20 @@
                     { id: 'marş', name: 'Marşlar & Direniş Ezgileri', icon: 'fa-flag' }
                 ];
 
-                let totalAnaSayfaEser = 0;
-
+                let totalCount = 0;
                 categories.forEach(cat => {
                     const catSongs = songs.map((song, globalIndex) => ({ ...song, globalIndex }))
                                           .filter(song => song.page === 'anaSayfa' && song.category === cat.id);
-
-                    totalAnaSayfaEser += catSongs.length;
+                    totalCount += catSongs.length;
 
                     if (catSongs.length > 0) {
                         let tracksHTML = '';
                         catSongs.forEach((song) => {
-                            const isCurrent = song.globalIndex === currentSongIndex;
+                            const isCurrent = currentPlayingList === songs && currentSongIndex === song.globalIndex;
+                            const isInPlaylist = customPlaylist.includes(song.globalIndex);
                             tracksHTML += `
                                 <div class="track-item ${isCurrent ? 'active' : ''}">
-                                    <div class="track-info" onclick="selectSong(${song.globalIndex})">
+                                    <div class="track-info" onclick="playSongFromList(songs, ${song.globalIndex})">
                                         <span class="track-number">${song.globalIndex + 1 < 10 ? '0' + (song.globalIndex + 1) : song.globalIndex + 1}</span>
                                         <div class="track-details">
                                             <h4>${song.title}</h4>
@@ -739,10 +759,13 @@
                                     </div>
                                     <div class="track-meta">
                                         <span class="track-genre">${song.genre}</span>
+                                        <button class="action-btn ${isInPlaylist ? 'remove' : ''}" onclick="toggleAddToPlaylist(${song.globalIndex})" title="${isInPlaylist ? 'Listeden Çıkar' : 'Çalma Listeme Ekle'}">
+                                            <i class="fa-solid ${isInPlaylist ? 'fa-check' : 'fa-plus'}"></i> ${isInPlaylist ? 'Listede' : 'Ekle'}
+                                        </button>
                                         <a href="${song.src}" class="download-btn" download title="MP3 İndir">
                                             <i class="fa-solid fa-download"></i> İndir
                                         </a>
-                                        <button class="play-btn-small" onclick="selectSong(${song.globalIndex})">
+                                        <button class="play-btn-small" onclick="playSongFromList(songs, ${song.globalIndex})">
                                             <i class="fa-solid ${isCurrent && !audio.paused ? 'fa-pause' : 'fa-play'}"></i>
                                         </button>
                                     </div>
@@ -750,34 +773,40 @@
                             `;
                         });
 
-                        html += `
-                            <div class="section-header" style="margin-top: 25px;">
-                                <h3 style="font-size: 1.05rem;"><i class="fa-solid ${cat.icon}"></i> ${cat.name}</h3>
-                            </div>
-                            <div class="track-list">
-                                ${tracksHTML}
-                            </div>
-                        `;
+                        html += `<div class="section-header" style="margin-top: 25px;"><h3 style="font-size: 1.05rem;"><i class="fa-solid ${cat.icon}"></i> ${cat.name}</h3></div><div class="track-list">${tracksHTML}</div>`;
                     }
                 });
 
                 html += `</div>`;
                 pageContentEl.innerHTML = html;
-                document.getElementById('track-count').innerText = `${totalAnaSayfaEser} Eser`;
+                document.getElementById('track-count').innerText = `${totalCount} Eser`;
 
-            } else if (currentPage === 'sovyet') {
+            } else if (currentPage === 'ozelPlaylist') {
                 videoSectionEl.style.display = 'none';
 
-                let sovyetSongs = songs.map((song, globalIndex) => ({ ...song, globalIndex }))
-                                       .filter(song => song.page === 'sovyet');
-
                 let tracksHTML = '';
-                sovyetSongs.forEach(song => {
-                    const isCurrent = song.globalIndex === currentSongIndex;
+                if (customPlaylist.length === 0) {
+                    pageContentEl.innerHTML = `
+                        <div class="section-header">
+                            <h3><i class="fa-solid fa-list-check"></i> Çalma Listem</h3>
+                            <span style="font-size: 0.85rem; color: var(--vivid-yellow);">0 Eser</span>
+                        </div>
+                        <div class="empty-page">
+                            <i class="fa-solid fa-music"></i>
+                            <h3>Çalma Listeniz Henüz Boş</h3>
+                            <p>Ana sayfadaki şarkıların yanında bulunan "Ekle" butonuna basarak kendi listenizi oluşturabilirsiniz.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                customPlaylist.forEach((globalIndex, listIndex) => {
+                    const song = songs[globalIndex];
+                    const isCurrent = currentPlayingList === customPlaylist && currentSongIndex === listIndex;
                     tracksHTML += `
                         <div class="track-item ${isCurrent ? 'active' : ''}">
-                            <div class="track-info" onclick="selectSong(${song.globalIndex})">
-                                <span class="track-number">01</span>
+                            <div class="track-info" onclick="playSongFromList(customPlaylist, ${listIndex})">
+                                <span class="track-number">${listIndex + 1 < 10 ? '0' + (listIndex + 1) : listIndex + 1}</span>
                                 <div class="track-details">
                                     <h4>${song.title}</h4>
                                     <p>${song.artist}</p>
@@ -785,10 +814,13 @@
                             </div>
                             <div class="track-meta">
                                 <span class="track-genre">${song.genre}</span>
+                                <button class="action-btn remove" onclick="toggleAddToPlaylist(${globalIndex})" title="Listeden Kaldır">
+                                    <i class="fa-solid fa-trash"></i> Kaldır
+                                </button>
                                 <a href="${song.src}" class="download-btn" download title="MP3 İndir">
                                     <i class="fa-solid fa-download"></i> İndir
                                 </a>
-                                <button class="play-btn-small" onclick="selectSong(${song.globalIndex})">
+                                <button class="play-btn-small" onclick="playSongFromList(customPlaylist, ${listIndex})">
                                     <i class="fa-solid ${isCurrent && !audio.paused ? 'fa-pause' : 'fa-play'}"></i>
                                 </button>
                             </div>
@@ -798,44 +830,86 @@
 
                 pageContentEl.innerHTML = `
                     <div class="section-header">
-                        <h3><i class="fa-solid fa-star"></i> Sovyet Müzikleri Arşivi</h3>
-                        <span style="font-size: 0.85rem; color: var(--vivid-yellow);">${sovyetSongs.length} Eser</span>
+                        <h3><i class="fa-solid fa-list-check"></i> Çalma Listem</h3>
+                        <span style="font-size: 0.85rem; color: var(--vivid-yellow);">${customPlaylist.length} Eser</span>
                     </div>
                     <div class="track-list">
                         ${tracksHTML}
                     </div>
                 `;
 
+            } else if (currentPage === 'sovyet') {
+                videoSectionEl.style.display = 'none';
+                let sovyetSongs = songs.map((song, globalIndex) => ({ ...song, globalIndex })).filter(song => song.page === 'sovyet');
+
+                let tracksHTML = '';
+                sovyetSongs.forEach(song => {
+                    const isCurrent = currentPlayingList === songs && currentSongIndex === song.globalIndex;
+                    const isInPlaylist = customPlaylist.includes(song.globalIndex);
+                    tracksHTML += `
+                        <div class="track-item ${isCurrent ? 'active' : ''}">
+                            <div class="track-info" onclick="playSongFromList(songs, ${song.globalIndex})">
+                                <span class="track-number">01</span>
+                                <div class="track-details">
+                                    <h4>${song.title}</h4>
+                                    <p>${song.artist}</p>
+                                </div>
+                            </div>
+                            <div class="track-meta">
+                                <span class="track-genre">${song.genre}</span>
+                                <button class="action-btn ${isInPlaylist ? 'remove' : ''}" onclick="toggleAddToPlaylist(${song.globalIndex})">
+                                    <i class="fa-solid ${isInPlaylist ? 'fa-check' : 'fa-plus'}"></i> ${isInPlaylist ? 'Listede' : 'Ekle'}
+                                </button>
+                                <a href="${song.src}" class="download-btn" download title="MP3 İndir">
+                                    <i class="fa-solid fa-download"></i> İndir
+                                </a>
+                                <button class="play-btn-small" onclick="playSongFromList(songs, ${song.globalIndex})">
+                                    <i class="fa-solid ${isCurrent && !audio.paused ? 'fa-pause' : 'fa-play'}"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                pageContentEl.innerHTML = `<div class="section-header"><h3><i class="fa-solid fa-star"></i> Sovyet Müzikleri Arşivi</h3><span style="font-size: 0.85rem; color: var(--vivid-yellow);">${sovyetSongs.length} Eser</span></div><div class="track-list">${tracksHTML}</div>`;
+
             } else if (currentPage === 'enternasyonal') {
                 videoSectionEl.style.display = 'none';
-
-                pageContentEl.innerHTML = `
-                    <div class="section-header">
-                        <h3><i class="fa-solid fa-globe"></i> Enternasyonal Müzikler</h3>
-                        <span style="font-size: 0.85rem; color: var(--vivid-yellow);">0 Eser</span>
-                    </div>
-                    <div class="empty-page">
-                        <i class="fa-solid fa-folder-open"></i>
-                        <h3>Bu Sayfa Henüz Boş</h3>
-                        <p>Enternasyonal müzik arşivi yakında buraya eklenecektir.</p>
-                    </div>
-                `;
+                pageContentEl.innerHTML = `<div class="section-header"><h3><i class="fa-solid fa-globe"></i> Enternasyonal Müzikler</h3><span style="font-size: 0.85rem; color: var(--vivid-yellow);">0 Eser</span></div><div class="empty-page"><i class="fa-solid fa-folder-open"></i><h3>Bu Sayfa Henüz Boş</h3><p>Enternasyonal müzik arşivi yakında buraya eklenecektir.</p></div>`;
             }
         }
 
-        function loadSong(index) {
+        function playSongFromList(listType, index) {
+            currentPlayingList = listType;
             currentSongIndex = index;
-            audio.src = songs[index].src;
-            currentTitle.innerText = songs[index].title;
-            currentArtist.innerText = songs[index].artist;
+            
+            let actualSongObj;
+            if (currentPlayingList === customPlaylist) {
+                const songGlobalIdx = customPlaylist[currentSongIndex];
+                actualSongObj = songs[songGlobalIdx];
+            } else {
+                actualSongObj = songs[currentSongIndex];
+            }
+
+            audio.src = actualSongObj.src;
+            currentTitle.innerText = actualSongObj.title;
+            currentArtist.innerText = actualSongObj.artist;
+            
+            audio.play();
+            playIcon.classList.remove('fa-play');
+            playIcon.classList.add('fa-pause');
             renderPage();
         }
 
         function togglePlay() {
             if (audio.paused) {
-                audio.play();
-                playIcon.classList.remove('fa-play');
-                playIcon.classList.add('fa-pause');
+                if (!audio.src) {
+                    playSongFromList(songs, 0);
+                } else {
+                    audio.play();
+                    playIcon.classList.remove('fa-play');
+                    playIcon.classList.add('fa-pause');
+                }
             } else {
                 audio.pause();
                 playIcon.classList.remove('fa-pause');
@@ -844,28 +918,15 @@
             renderPage();
         }
 
-        function selectSong(index) {
-            if (currentSongIndex === index) {
-                togglePlay();
-            } else {
-                loadSong(index);
-                audio.play();
-                playIcon.classList.remove('fa-play');
-                playIcon.classList.add('fa-pause');
-                renderPage();
-            }
-        }
-
         playPauseBtn.addEventListener('click', togglePlay);
 
-        // Sonraki şarkıya geçiş
         function nextSong() {
             currentSongIndex++;
-            if (currentSongIndex >= songs.length) {
+            if (currentSongIndex >= currentPlayingList.length) {
                 if (isPlaylistLoop) {
                     currentSongIndex = 0; 
                 } else {
-                    currentSongIndex = songs.length - 1;
+                    currentSongIndex = currentPlayingList.length - 1;
                     audio.pause();
                     playIcon.classList.remove('fa-pause');
                     playIcon.classList.add('fa-play');
@@ -873,20 +934,29 @@
                     return;
                 }
             }
-            loadSong(currentSongIndex);
+            
+            let songObj = currentPlayingList === customPlaylist ? songs[currentPlayingList[currentSongIndex]] : currentPlayingList[currentSongIndex];
+            audio.src = songObj.src;
+            currentTitle.innerText = songObj.title;
+            currentArtist.innerText = songObj.artist;
             audio.play();
             playIcon.classList.remove('fa-play');
             playIcon.classList.add('fa-pause');
+            renderPage();
         }
 
         document.getElementById('nextBtn').addEventListener('click', nextSong);
 
         document.getElementById('prevBtn').addEventListener('click', () => {
-            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
-            loadSong(currentSongIndex);
+            currentSongIndex = (currentSongIndex - 1 + currentPlayingList.length) % currentPlayingList.length;
+            let songObj = currentPlayingList === customPlaylist ? songs[currentPlayingList[currentSongIndex]] : currentPlayingList[currentSongIndex];
+            audio.src = songObj.src;
+            currentTitle.innerText = songObj.title;
+            currentArtist.innerText = songObj.artist;
             audio.play();
             playIcon.classList.remove('fa-play');
             playIcon.classList.add('fa-pause');
+            renderPage();
         });
 
         audio.addEventListener('ended', () => {
@@ -921,10 +991,8 @@
             audio.volume = e.target.value;
         });
 
-        // Sayfa ilk açıldığında Ana Sayfayı yükle
         renderPage();
-        loadSong(0);
-        audio.pause(); // İlk açılışta otomatik çalmasın
+        audio.pause();
     </script>
 </body>
 </html>
