@@ -564,7 +564,7 @@
                 <i class="fa-solid fa-repeat"></i> <span id="loopStatusText">Döngü: Açık</span>
             </button>
             <button class="nav-btn" onclick="switchPage('anaSayfa')"><i class="fa-solid fa-house"></i> Ana Sayfa</button>
-            <button class="nav-btn" onclick="switchPage('ozelPlaylist')"><i class="fa-solid id-badge fa-list-check"></i> Çalma Listem (<span id="playlistCount">0</span>)</button>
+            <button class="nav-btn" onclick="switchPage('ozelPlaylist')"><i class="fa-solid fa-list-check"></i> Çalma Listem (<span id="playlistCount">0</span>)</button>
             <button class="nav-btn" onclick="switchPage('sovyet')"><i class="fa-solid fa-star"></i> Sovyet Müzikleri</button>
             <button class="nav-btn" onclick="switchPage('enternasyonal')"><i class="fa-solid fa-globe"></i> Enternasyonal</button>
             <a href="https://github.com" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
@@ -647,6 +647,7 @@
 
     <script>
         const songs = [
+            // Ana Sayfa Şarkıları
             { title: "Haklıyız Kazanacağız", artist: "Grup Yorum", genre: "Marş", category: "marş", src: "hakliyizkazanacagiz.mp3", page: "anaSayfa" },
             { title: "Dağlara Gel", artist: "Grup Yorum", genre: "Türkü / Protest", category: "türkü", src: "daglar.mp3", page: "anaSayfa" },
             { title: "De Be Aslan Karam", artist: "Grup Ekin", genre: "Protest / Halk", category: "türkü", src: "debeaslankaram.mp3", page: "anaSayfa" },
@@ -663,13 +664,19 @@
             { title: "Molotoflu Vodvil (feat. Ağaçkakan)", artist: "Protest Rap", genre: "Protest Rap", category: "rap", src: "vodvil.mp3", page: "anaSayfa" },
             { title: "İşçi Sınıfı Marşı: “Geliyoruz Zincirleri Kıra Kıra Hey!”", artist: "ATTF İşçi Korosu", genre: "Marş", category: "marş", src: "geliyoruz.mp3", page: "anaSayfa" },
             { title: "Reşo & Keçe Kurdan", artist: "Grup YORUM", genre: "Türkü / Özgün", category: "türkü", src: "reso.mp3", page: "anaSayfa" },
-            { title: "Katyusha / Катюша", artist: "Red Army", genre: "Sovyet Marşı", category: "sovyet", src: "katyusha.mp3", page: "sovyet" }
+
+            // Sovyet Müzikleri Sayfası Şarkıları
+            { title: "Katyusha / Катюша", artist: "Red Army", genre: "Sovyet Marşı", category: "sovyet", src: "katyusha.mp3", page: "sovyet" },
+            { title: "National Anthem of USSR", artist: "Red Army", genre: "Sovyet Marşı", category: "sovyet", src: "ussr.mp3", page: "sovyet" },
+            { title: "On the Road", artist: "Red Army", genre: "Sovyet Marşı", category: "sovyet", src: "red.mp3", page: "sovyet" },
+            { title: "Kalinka", artist: "Red Army", genre: "Sovyet Halk Ezgisi", category: "sovyet", src: "Kalinka.mp3", page: "sovyet" },
+            { title: "The Red Army Is the Strongest", artist: "Red Army", genre: "Sovyet Marşı", category: "sovyet", src: "army.mp3", page: "sovyet" },
+            { title: "Oh Fields My Fields (Song of the Plains)", artist: "Red Army", genre: "Sovyet Marşı", category: "sovyet", src: "fields.mp3", page: "sovyet" },
+            { title: "Lenin Takoy Molodoy", artist: "Red Army", genre: "Sovyet Marşı", category: "sovyet", src: "lenin.mp3", page: "sovyet" }
         ];
 
-        // Kullanıcının özel çalma listesi (localStorage'da saklanır)
         let customPlaylist = JSON.parse(localStorage.getItem('dmk_custom_playlist')) || [];
-        
-        let currentPlayingList = songs; // Aktif çalınan liste (Ana liste veya özel liste)
+        let currentPlayingList = songs; 
         let currentSongIndex = 0;
         let isPlaylistLoop = true; 
         let currentPage = 'anaSayfa';
@@ -794,7 +801,7 @@
                         <div class="empty-page">
                             <i class="fa-solid fa-music"></i>
                             <h3>Çalma Listeniz Henüz Boş</h3>
-                            <p>Ana sayfadaki şarkıların yanında bulunan "Ekle" butonuna basarak kendi listenizi oluşturabilirsiniz.</p>
+                            <p>Şarkıların yanında bulunan "Ekle" butonuna basarak kendi listenizi oluşturabilirsiniz.</p>
                         </div>
                     `;
                     return;
@@ -843,13 +850,13 @@
                 let sovyetSongs = songs.map((song, globalIndex) => ({ ...song, globalIndex })).filter(song => song.page === 'sovyet');
 
                 let tracksHTML = '';
-                sovyetSongs.forEach(song => {
+                sovyetSongs.forEach((song, idx) => {
                     const isCurrent = currentPlayingList === songs && currentSongIndex === song.globalIndex;
                     const isInPlaylist = customPlaylist.includes(song.globalIndex);
                     tracksHTML += `
                         <div class="track-item ${isCurrent ? 'active' : ''}">
                             <div class="track-info" onclick="playSongFromList(songs, ${song.globalIndex})">
-                                <span class="track-number">01</span>
+                                <span class="track-number">${idx + 1 < 10 ? '0' + (idx + 1) : idx + 1}</span>
                                 <div class="track-details">
                                     <h4>${song.title}</h4>
                                     <p>${song.artist}</p>
